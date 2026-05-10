@@ -96,6 +96,7 @@ Check out `/examples` for inspiration! Learn more about each one in its README.
 - [`airline`](examples/airline): A multi-agent setup for handling different customer service requests in an airline context.
 - [`support_bot`](examples/support_bot): A customer service bot which includes a user interface agent and a help center agent with several tools
 - [`personal_shopper`](examples/personal_shopper): A personal shopping agent that can help with making sales and refunding orders
+- [`context_continuity_packet`](examples/context_continuity_packet): Phase 1 recipe showing optional app-layer context continuity across separate runs without modifying Swarm runtime internals.
 
 # Documentation
 
