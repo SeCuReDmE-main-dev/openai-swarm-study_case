@@ -93,10 +93,13 @@ class LocalJsonContextStore:
     def load(self) -> Dict[str, Any]:
         if not self.path.exists():
             return {}
-        with self.path.open("r", encoding="utf-8") as handle:
-            data = json.load(handle)
+        try:
+            with self.path.open("r", encoding="utf-8") as handle:
+                data = json.load(handle)
+        except json.JSONDecodeError:
+            return {}
         if not isinstance(data, dict):
-            raise ValueError("Persisted context must be a JSON object.")
+            return {}
         return data
 
     def save(self, context: Dict[str, Any]) -> None:
@@ -108,8 +111,16 @@ def utc_now_iso() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat()
 
 
+def parse_utc_timestamp(timestamp: str) -> datetime:
+    normalized_timestamp = timestamp.replace("Z", "+00:00")
+    parsed = datetime.fromisoformat(normalized_timestamp)
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
 def is_stale(timestamp: str, max_age_minutes: int) -> bool:
-    parsed = datetime.fromisoformat(timestamp)
+    parsed = parse_utc_timestamp(timestamp)
     age = datetime.now(timezone.utc) - parsed
     return age > timedelta(minutes=max_age_minutes)
 
